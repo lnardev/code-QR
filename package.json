@@ -1,0 +1,12 @@
+{
+  "name": "qr-generator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generador de QR vanilla (HTML/CSS/JS)",
+  "scripts": {
+    "test": "node --test \"test/*.test.js\""
+  },
+  "devDependencies": {
+    "qrcode-generator": "^2.0.4"
+  }
+}
