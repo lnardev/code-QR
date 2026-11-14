@@ -15,10 +15,29 @@
   <main class="container">
     <section class="card">
       <label for="inputText">Texto o URL</label>
-      <textarea id="inputText" rows="3" placeholder="https://ejemplo.com o cualquier texto"></textarea>
+      <textarea id="inputText" rows="3" placeholder="https://ejemplo.com o cualquier texto" autofocus></textarea>
+
+      <div class="options">
+        <div>
+          <label for="levelSelect">Corrección de errores</label>
+          <select id="levelSelect">
+            <option value="L">L · 7 %</option>
+            <option value="M" selected>M · 15 %</option>
+            <option value="Q">Q · 25 %</option>
+            <option value="H">H · 30 %</option>
+          </select>
+        </div>
+        <div>
+          <label for="sizeSelect">Tamaño de descarga</label>
+          <select id="sizeSelect">
+            <option value="256">256 px</option>
+            <option value="512" selected>512 px</option>
+            <option value="1024">1024 px</option>
+          </select>
+        </div>
+      </div>
 
       <div class="actions">
-        <button id="generateBtn" class="btn primary">Generar QR</button>
         <button id="clearBtn" class="btn ghost">Limpiar</button>
       </div>
 
@@ -26,15 +45,20 @@
     </section>
 
     <section class="card result">
-      <div id="qr" class="qr-box" aria-live="polite"></div>
+      <div class="qr-box" aria-live="polite">
+        <canvas id="qrCanvas" width="256" height="256" hidden></canvas>
+        <p id="placeholder" class="muted">El QR aparecerá aquí.</p>
+      </div>
       <div class="actions">
-        <button id="downloadBtn" class="btn" disabled>Descargar PNG</button>
+        <button id="downloadPngBtn" class="btn" disabled>Descargar PNG</button>
+        <button id="downloadSvgBtn" class="btn" disabled>Descargar SVG</button>
         <button id="copyBtn" class="btn" disabled>Copiar imagen</button>
       </div>
     </section>
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/vendor/qrcode.js"></script>
+  <script src="js/qr-core.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
