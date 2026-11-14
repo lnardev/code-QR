@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f8cff"/>
+      <stop offset="1" stop-color="#7a5cff"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <g fill="#fff">
+    <path fill-rule="evenodd" d="M10 10h18v18H10zM15 15v8h8v-8z"/>
+    <path fill-rule="evenodd" d="M36 10h18v18H36zM41 15v8h8v-8z"/>
+    <path fill-rule="evenodd" d="M10 36h18v18H10zM15 41v8h8v-8z"/>
+    <rect x="18" y="18" width="2.5" height="2.5" rx=".6"/>
+    <rect x="44" y="18" width="2.5" height="2.5" rx=".6"/>
+    <rect x="18" y="44" width="2.5" height="2.5" rx=".6"/>
+    <rect x="36" y="36" width="7" height="7" rx="1.5"/>
+    <rect x="46" y="36" width="8" height="7" rx="1.5"/>
+    <rect x="36" y="46" width="7" height="8" rx="1.5"/>
+    <rect x="46" y="46" width="8" height="8" rx="1.5"/>
+  </g>
+</svg>
