@@ -1,4 +1,5 @@
 const DEBOUNCE_MS = 150;
+const REVOKE_DELAY_MS = 1000;
 
 const input = document.getElementById('inputText');
 const levelSelect = document.getElementById('levelSelect');
@@ -33,7 +34,7 @@ function config() {
 
 function drawCanvas(size) {
   const opts = config();
-  const { cell, pixels } = QrCore.layout(matrix.count, size, opts.margin);
+  const { pixels, edges } = QrCore.layout(matrix.count, size, opts.margin);
   canvas.width = pixels;
   canvas.height = pixels;
   const ctx = canvas.getContext('2d');
@@ -43,7 +44,9 @@ function drawCanvas(size) {
   for (let row = 0; row < matrix.count; row++) {
     for (let col = 0; col < matrix.count; col++) {
       if (matrix.isDark(row, col)) {
-        ctx.fillRect((col + opts.margin) * cell, (row + opts.margin) * cell, cell, cell);
+        const x = edges[col + opts.margin];
+        const y = edges[row + opts.margin];
+        ctx.fillRect(x, y, edges[col + opts.margin + 1] - x, edges[row + opts.margin + 1] - y);
       }
     }
   }
@@ -75,7 +78,7 @@ function saveBlob(blob, name) {
   a.href = url;
   a.download = name;
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), REVOKE_DELAY_MS);
 }
 
 function downloadPng() {

@@ -83,9 +83,49 @@ test('encode handles the maximum payload at level H', () => {
   assert.equal(matrix.count, 177);
 });
 
-test('layout picks an integer cell size that fits the requested size', () => {
-  assert.deepEqual(QrCore.layout(25, 512, 4), { cell: 15, total: 33, pixels: 495 });
-  assert.deepEqual(QrCore.layout(177, 128, 4), { cell: 1, total: 185, pixels: 185 });
+test('validate and encode ignore surrounding whitespace', () => {
+  assert.equal(QrCore.validate('a'.repeat(LIMITS.M) + '\n  ', 'M').ok, true);
+  assert.equal(QrCore.validate('a'.repeat(LIMITS.M + 1) + '\n', 'M').ok, false);
+  const padded = QrCore.encode(qrcode, ' abc\n', 'M');
+  const plain = QrCore.encode(qrcode, 'abc', 'M');
+  assert.equal(padded.count, plain.count);
+  for (let row = 0; row < plain.count; row++) {
+    for (let col = 0; col < plain.count; col++) {
+      assert.equal(padded.isDark(row, col), plain.isDark(row, col));
+    }
+  }
+});
+
+test('encode keeps interior whitespace', () => {
+  const spaced = QrCore.encode(qrcode, 'a  b', 'M');
+  const tight = QrCore.encode(qrcode, 'a b', 'M');
+  let differs = false;
+  for (let row = 0; row < spaced.count && !differs; row++) {
+    for (let col = 0; col < spaced.count; col++) {
+      if (spaced.isDark(row, col) !== tight.isDark(row, col)) differs = true;
+    }
+  }
+  assert.equal(differs, true);
+});
+
+test('layout fills exactly the requested size with edges differing by at most one pixel', () => {
+  const { total, pixels, edges } = QrCore.layout(25, 512, 4);
+  assert.equal(total, 33);
+  assert.equal(pixels, 512);
+  assert.equal(edges.length, total + 1);
+  assert.equal(edges[0], 0);
+  assert.equal(edges[total], 512);
+  for (let i = 0; i < total; i++) {
+    assert.equal([15, 16].includes(edges[i + 1] - edges[i]), true);
+  }
+});
+
+test('layout never produces a zero-width module when size is below the grid', () => {
+  const { pixels, edges } = QrCore.layout(177, 128, 4);
+  assert.equal(pixels, 185);
+  for (let i = 0; i < 185; i++) {
+    assert.equal(edges[i + 1] - edges[i], 1);
+  }
 });
 
 test('toSvg emits a scalable SVG with colors and no user text', () => {

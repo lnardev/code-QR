@@ -39,10 +39,11 @@
    * @returns {{ ok: true } | { ok: false, error: string }}
    */
   function validate(text, level) {
-    if (text.trim() === '') {
+    const trimmed = text.trim();
+    if (trimmed === '') {
       return { ok: false, error: 'Ingresa texto o una URL.' };
     }
-    if (byteLength(text) > BYTE_CAPACITY[normalizeLevel(level)]) {
+    if (byteLength(trimmed) > BYTE_CAPACITY[normalizeLevel(level)]) {
       return { ok: false, error: 'El texto es demasiado largo para este nivel de corrección.' };
     }
     return { ok: true };
@@ -87,22 +88,25 @@
   function encode(factory, text, level) {
     factory.stringToBytes = factory.stringToBytesFuncs['UTF-8'];
     const qr = factory(0, normalizeLevel(level));
-    qr.addData(text);
+    qr.addData(text.trim());
     qr.make();
     return { count: qr.getModuleCount(), isDark: (row, col) => qr.isDark(row, col) };
   }
 
   /**
-   * Largest integer cell size whose full grid (modules + quiet zone) fits in `size` pixels.
+   * Pixel grid for a QR of `count` modules plus a quiet zone. The canvas is exactly `size`
+   * pixels (or one pixel per module when `size` is smaller than the grid); module widths
+   * differ by at most one pixel, so there is no interpolation blur.
    * @param {number} count modules per side
    * @param {number} size requested pixels per side
    * @param {number} margin quiet zone in modules
-   * @returns {{ cell: number, total: number, pixels: number }}
+   * @returns {{ total: number, pixels: number, edges: number[] }} `edges[i]..edges[i + 1]` spans module `i`
    */
   function layout(count, size, margin) {
     const total = count + margin * 2;
-    const cell = Math.max(1, Math.floor(size / total));
-    return { cell, total, pixels: cell * total };
+    const pixels = Math.max(size, total);
+    const edges = Array.from({ length: total + 1 }, (_, i) => Math.round((i * pixels) / total));
+    return { total, pixels, edges };
   }
 
   /**
